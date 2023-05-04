@@ -11,6 +11,7 @@ tspan = [0:1/24:10]'; %hourly evaluations over 10 days
 
 
 %creating a logical array that adds pyridine in 10 hour shifts, 6 days a week
+%during shifts the array value is 1, otherwise it is 0
 
 shifts = zeros(1, length(tspan));
  

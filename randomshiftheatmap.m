@@ -1,7 +1,7 @@
 clear, clc, clf
-m = 24; iterations = 50; tspan = [0:1/24:10]'; criticalpyridine = 2.75; totalpyridineadded = 30; LC50 = 0;
+m = 24; iterations = 1; tspan = [0:1/24:10]'; criticalpyridine = 2.75; totalpyridineadded = 30; LC50 = 0;
 average = zeros(iterations);
-averageiter = 20;
+averageiter = 1; %number of repeated simulations to average over
 
 for n = 1:averageiter
 
@@ -18,6 +18,7 @@ time = 0; x0 = [0, 0]; start = 1; %initial conditions
 
 
 %calculate time between additions
+
 for k = 1:10000000
     exprv(k) = mod(log(1-rand)/(-m), 10/24);
     if sum(exprv)>90/24
@@ -38,7 +39,7 @@ for k = 1:length(exprv)
     time = time + exprv(k); %time until next event (addition of pyridine)
     
     else
-       % exprv(k) = 10 - sum(exprv(1:k-1));
+        exprv(k) = 10/24 - sum(exprv(1:k-1));
         exprv = exprv(k:end);
         break
     end
@@ -82,7 +83,9 @@ end
     time = days+1; %time until next event (addition of pyridine)
     x0 = [x(length(t),1), x(length(t),2)]; 
 end
+
 rshiftint(iterations+1-j, i) = (length(tspan)-1)*(findlength(A(:,3), criticalpyridine))/length(A);
+
 end
 
 %LC10, 20 and 50 values
@@ -101,9 +104,10 @@ end
 rshiftmap = heatmap(rshiftint, 'Xdata', num2cell(1/iterations:1/iterations:1), 'Ydata', num2cell(1:-1/iterations:1/iterations), 'CellLabelColor','none'); %plot heat map
 ylabel('Excretion rate'); xlabel('Consumption rate');
 rshiftmap.Colormap = turbo;
-intensivemap.ColorLimits = [0 191.5566];
+intensivemap.ColorLimits = [0 188.2776];
 
 %Display axis in 0.1 steps, for clarity
+
 idx = rem(1/iterations:1/iterations:1, 0.1) == 0;
 rshiftmap.XDisplayLabels(~idx) = num2cell({''}); % replace rejected tick labels with empties
 idy = rem(1:-1/iterations:1/iterations, 0.1) == 0;
